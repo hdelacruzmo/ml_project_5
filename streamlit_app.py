@@ -7,18 +7,21 @@ from shapely.geometry import Polygon
 from streamlit_folium import st_folium
 from src.back.ModelController import ModelController
 
-st.set_page_config(layout="wide", page_title="MaxEnt Bounding Box", page_icon="🧠")
+st.set_page_config(layout="wide", page_title="MaxEnt - Visualizador", page_icon="🧠")
+st.title("🧠 Visualizador y Predicción con Modelo MaxEnt")
 
-st.title("🧠 Visualizador y Predicción - Modelo MaxEnt")
+# -------------------------------
+# 🗺️ VISUALIZACIÓN DEL GPKG
+# -------------------------------
 
 with st.expander("🗺️ Ver área geográfica cubierta (.gpkg)"):
-    uploaded_file = st.file_uploader(
+    uploaded_gpkg = st.file_uploader(
         "📂 Sube tu archivo GPKG", accept_multiple_files=False, type=["gpkg"], key="gpkg"
     )
 
-    if uploaded_file is not None:
+    if uploaded_gpkg is not None:
         try:
-            gdf = gpd.read_file(uploaded_file)
+            gdf = gpd.read_file(uploaded_gpkg)
 
             if gdf.crs and gdf.crs.to_epsg() != 4326:
                 st.info(f"📐 Reproyectando desde {gdf.crs} a EPSG:4326 para visualización.")
@@ -40,7 +43,6 @@ with st.expander("🗺️ Ver área geográfica cubierta (.gpkg)"):
 
             mapa = folium.Map(location=[(miny + maxy)/2, (minx + maxx)/2], zoom_start=8, tiles=None)
 
-            # Basemaps
             folium.TileLayer("OpenStreetMap", name="Mapa Base").add_to(mapa)
             folium.TileLayer(
                 tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -67,17 +69,17 @@ with st.expander("🗺️ Ver área geográfica cubierta (.gpkg)"):
         except Exception as e:
             st.error(f"❌ Error leyendo el archivo: {e}")
 
-# ----------------------------------------------------
-# SECCIÓN DE PREDICCIÓN
-# ----------------------------------------------------
+# -------------------------------
+# 🔍 PREDICCIÓN
+# -------------------------------
 
 st.markdown("---")
-st.header("📊 Predicciones con Modelos Entrenados")
+st.header("📊 Predicción con modelo MaxEnt (pipeline)")
 
 ctrl = ModelController()
 
 uploaded_csv = st.file_uploader(
-    "📂 Sube tu archivo CSV con datos de entrada", type=["csv"], key="csv_prediccion"
+    "📂 Sube tu archivo CSV con datos crudos para predicción", type=["csv"], key="csv_prediccion"
 )
 
 if uploaded_csv is not None:
@@ -86,34 +88,19 @@ if uploaded_csv is not None:
         input_df, is_valid = ctrl.load_input_data(bytes_data)
 
         if not is_valid:
-            st.error("⚠️ Las columnas del CSV no coinciden con lo esperado.")
+            st.error("⚠️ La columna 'tipo_punto' no se encuentra en el archivo.")
         else:
-            rf_df, maxent_df, full_df = ctrl.predict()
+            df_resultado = ctrl.predict()
 
-            tab1, tab2, tab3, tab4, tab5 = st.tabs([
-                "Input Data", "Stats", "Random Forest", "MaxEnt", "Full View"
-            ])
+            tab1, tab2 = st.tabs(["Datos de Entrada", "Resultado de la Predicción"])
 
             with tab1:
                 st.subheader("🧩 Datos de entrada")
                 st.dataframe(input_df)
 
             with tab2:
-                st.subheader("📊 Estadísticas del dataset")
-                st.dataframe(input_df.describe())
-
-            with tab3:
-                st.subheader("🌲 Random Forest")
-                st.dataframe(rf_df)
-
-            with tab4:
-                st.subheader("🧠 MaxEnt (Regresión Logística)")
-                st.dataframe(maxent_df)
-
-            with tab5:
-                st.subheader("🔍 Comparación entre modelos")
-                st.dataframe(full_df)
+                st.subheader("🧠 Predicción - MaxEnt")
+                st.dataframe(df_resultado)
 
     except Exception as e:
         st.error(f"❌ Error durante el procesamiento: {e}")
-
