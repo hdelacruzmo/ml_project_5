@@ -7,11 +7,11 @@ from shapely.geometry import Polygon
 from streamlit_folium import st_folium
 from src.back.ModelController import ModelController
 
-st.set_page_config(layout="wide", page_title="MaxEnt - Visualizador", page_icon="ðﾟﾧﾠ")
-st.title(" Visualizador y Predicción con Modelo MaxEnt")
+st.set_page_config(layout="wide", page_title="MaxEnt - Visualizador", page_icon="Sitios Búsquedaﾠ")
+st.title(" Visualizador y Predicción con Modelo Regresión logística MaxEnt")
 
 # -------------------------------
-# ðﾟﾗﾺ️ VISUALIZACIÓN DEL GPKG
+#  VISUALIZACIÓN DEL GPKG
 # -------------------------------
 
 with st.expander(" Ver área geográfica cubierta (.gpkg)"):
@@ -87,7 +87,7 @@ if uploaded_gpkg is not None:
 
         gdf_resultado = ctrl.predict_from_gdf(gdf_input)
 
-        st.subheader("ðﾟﾓﾄ Resultados del modelo")
+        st.subheader(" Resultados del modelo")
         st.dataframe(gdf_resultado.drop(columns="geometry").head())
 
         # Visualizar en mapa
