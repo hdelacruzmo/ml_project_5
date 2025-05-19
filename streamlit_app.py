@@ -76,44 +76,44 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
 # -------------------------------
 
 st.markdown("---")
-st.header("Predicción y visualización del resultado")
+st.header("Predicción y resumen estadístico")
 
-from src.back.ModelController import ModelController
 ctrl = ModelController()
 
 if uploaded_gpkg is not None:
     try:
         gdf_input = gpd.read_file(uploaded_gpkg)
-
         gdf_resultado = ctrl.predict_from_gdf(gdf_input)
 
         st.subheader(" Resultados del modelo")
         st.dataframe(gdf_resultado.drop(columns="geometry").head())
 
-        # Visualizar en mapa
-        st.subheader("Mapa con probabilidades")
+        # Solo estadísticas, visualización comentada
+        st.subheader("Estadísticas por rangos de probabilidad")
+        import matplotlib.pyplot as plt
+        import seaborn as sns
 
-        if gdf_resultado.crs and gdf_resultado.crs.to_epsg() != 4326:
-            gdf_resultado = gdf_resultado.to_crs(epsg=4326)
+        bins = [0, 0.2, 0.4, 0.6, 0.8, 1.01]
+        labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
+        gdf_resultado["rango_probabilidad"] = pd.cut(
+            gdf_resultado["probabilidad"], bins=bins, labels=labels, include_lowest=True
+        )
+        conteo = gdf_resultado["rango_probabilidad"].value_counts().sort_index()
 
-        bounds = gdf_resultado.total_bounds
-        centro = [(bounds[1] + bounds[3]) / 2, (bounds[0] + bounds[2]) / 2]
-        mapa = folium.Map(location=centro, zoom_start=8, tiles="CartoDB positron")
+        fig, ax = plt.subplots(figsize=(8, 5))
+        sns.barplot(x=conteo.index, y=conteo.values, palette="coolwarm", ax=ax)
+        ax.set_title("Cantidad de puntos por rango de probabilidad")
+        ax.set_xlabel("Rango de probabilidad")
+        ax.set_ylabel("Número de puntos")
+        st.pyplot(fig)
 
-        for _, row in gdf_resultado.iterrows():
-            prob = row["probabilidad"]
-            color = "red" if prob > 0.5 else "blue"
-            folium.CircleMarker(
-                location=[row.geometry.y, row.geometry.x],
-                radius=4,
-                color=color,
-                fill=True,
-                fill_opacity=0.7,
-                popup=f"Prob: {prob:.2f}"
-            ).add_to(mapa)
+        st.markdown("### Estadísticas adicionales:")
+        st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
+        st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
+        st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
+        st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
 
-        st_folium(mapa, width=900, height=600)
-
+        # Exportación .gpkg
         st.markdown("### Descargar archivo con resultados")
         output_path = "/tmp/resultados_probabilidad.gpkg"
         gdf_resultado.to_file(output_path, driver="GPKG")
@@ -127,4 +127,3 @@ if uploaded_gpkg is not None:
 
     except Exception as e:
         st.error(f"❌ Error durante la predicción: {e}")
-
