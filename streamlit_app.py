@@ -8,7 +8,7 @@ from streamlit_folium import st_folium
 from src.back.ModelController import ModelController
 
 st.set_page_config(layout="wide", page_title="MaxEnt - Visualizador", page_icon="ðﾟﾧﾠ")
-st.title("ðﾟﾧﾠ Visualizador y Predicción con Modelo MaxEnt")
+st.title(" Visualizador y Predicción con Modelo MaxEnt")
 
 # -------------------------------
 # ðﾟﾗﾺ️ VISUALIZACIÓN DEL GPKG
