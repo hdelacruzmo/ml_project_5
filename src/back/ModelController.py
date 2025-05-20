@@ -21,6 +21,6 @@ class ModelController:
         modelo_alt = joblib.load(osp.join(self.model_path, "randomforest_model.joblib"))
         atributos = gdf.drop(columns="geometry")
         gdf = gdf.copy()
-        gdf["probabilidad_2"] = np.round(modelo_alt.predict_proba(atributos)[:, 1], 4)
+        gdf["probabilidad"] = np.round(modelo_alt.predict_proba(atributos)[:, 1], 4)
         return gdf
 
