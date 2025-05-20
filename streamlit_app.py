@@ -64,11 +64,8 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
             mapa.fit_bounds([[miny, minx], [maxy, maxx]])
             folium.LayerControl(collapsed=False).add_to(mapa)
 
-            with st.container():
-                st.markdown("Área aproximada del archivo:")
-                st_folium(mapa, width=900, height=500)
-            
-            st.markdown("---")
+            st_folium(mapa, width=900, height=500)
+
 
         except Exception as e:
             st.error(f"❌ Error leyendo el archivo: {e}")
