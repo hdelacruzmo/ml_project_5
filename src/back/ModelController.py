@@ -16,3 +16,11 @@ class ModelController:
         gdf = gdf.copy()
         gdf["probabilidad"] = np.round(probabilidades, 4)
         return gdf
+
+def predict_with_second_model(self, gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    modelo_alt = joblib.load(osp.join(self.model_path, "segundo_modelo.joblib"))
+    atributos = gdf.drop(columns="geometry")
+    gdf = gdf.copy()
+    gdf["probabilidad_2"] = np.round(modelo_alt.predict_proba(atributos)[:, 1], 4)
+    return gdf
+
