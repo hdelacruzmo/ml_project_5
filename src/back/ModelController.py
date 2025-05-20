@@ -18,9 +18,17 @@ class ModelController:
         return gdf
 
     def predict_with_second_model(self, gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-        modelo_alt = joblib.load(osp.join(self.model_path, "randomforest_model.joblib"))
+        modelo_alt = joblib.load(osp.join(self.model_path, "maxent_model_ensamble.joblib"))
         atributos = gdf.drop(columns="geometry")
         gdf = gdf.copy()
         gdf["probabilidad"] = np.round(modelo_alt.predict_proba(atributos)[:, 1], 4)
         return gdf
+
+    def predict_with_third_model(self, gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+        modelo_3 = joblib.load(osp.join(self.model_path, "randomforest_model.joblib"))
+        atributos = gdf.drop(columns="geometry")
+        gdf = gdf.copy()
+        gdf["probabilidad"] = np.round(modelo_3.predict_proba(atributos)[:, 1], 4)
+        return gdf
+
 
