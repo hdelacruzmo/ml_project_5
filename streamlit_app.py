@@ -71,11 +71,9 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
             st.error(f"❌ Error leyendo el archivo: {e}")
 
 
-
 # -------------------------------
-#  PREDICCIÓN DESDE GPKG
+#  PREDICCIÓN DESDE GPKG - DOS MODELOS
 # -------------------------------
-
 st.markdown("---")
 st.header("Predicción y resumen estadístico")
 
@@ -84,55 +82,57 @@ ctrl = ModelController()
 if uploaded_gpkg is not None:
     try:
         gdf_input = gpd.read_file(uploaded_gpkg)
-        gdf_resultado = ctrl.predict_from_gdf(gdf_input)
 
-        st.subheader(" Resultados del modelo")
-        st.dataframe(gdf_resultado.drop(columns="geometry").head())
+        tab1, tab2 = st.tabs(["Modelo 1: MaxEnt", "Modelo 2: Alternativo"])
 
-        # Solo estadísticas, visualización comentada
-        st.subheader("Estadísticas por rangos de probabilidad")
-        import matplotlib.pyplot as plt
-        import seaborn as sns
+        for nombre_modelo, gdf_resultado in [
+            ("MaxEnt", ctrl.predict_from_gdf(gdf_input)),
+            ("Alternativo", ctrl.predict_with_second_model(gdf_input))
+        ]:
+            with (tab1 if nombre_modelo == "MaxEnt" else tab2):
+                st.subheader(f"Resultados del modelo {nombre_modelo}")
+                st.dataframe(gdf_resultado.drop(columns="geometry").head())
 
-        bins = [0, 0.2, 0.4, 0.6, 0.8, 1.01]
-        labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
-        gdf_resultado["rango_probabilidad"] = pd.cut(
-            gdf_resultado["probabilidad"], bins=bins, labels=labels, include_lowest=True
-        )
-        conteo = gdf_resultado["rango_probabilidad"].value_counts().sort_index()
+                st.subheader("Estadísticas por rangos de probabilidad")
 
-        conteo_df = conteo.reset_index()
-        conteo_df.columns = ["Rango", "Cantidad"]
-        
-        fig = px.bar(
-            conteo_df,
-            x="Rango",
-            y="Cantidad",
-            color="Rango",
-            title="Cantidad de puntos por rango de probabilidad",
-            color_discrete_sequence=px.colors.sequential.YlGnBu,
-            text="Cantidad"
-        )
-        fig.update_layout(xaxis_title="Rango de probabilidad", yaxis_title="Número de puntos")
-        st.plotly_chart(fig, use_container_width=True)
+                bins = [0, 0.2, 0.4, 0.6, 0.8, 1.01]
+                labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
+                gdf_resultado["rango_probabilidad"] = pd.cut(
+                    gdf_resultado["probabilidad"], bins=bins, labels=labels, include_lowest=True
+                )
+                conteo = gdf_resultado["rango_probabilidad"].value_counts().sort_index()
 
-        st.markdown("### Estadísticas adicionales:")
-        st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
-        st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
-        st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
-        st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
+                conteo_df = conteo.reset_index()
+                conteo_df.columns = ["Rango", "Cantidad"]
 
-        # Exportación .gpkg
-        st.markdown("### Descargar archivo con resultados")
-        output_path = "/tmp/resultados_probabilidad.gpkg"
-        gdf_resultado.to_file(output_path, driver="GPKG")
-        with open(output_path, "rb") as f:
-            st.download_button(
-                label="Descargar GPKG con columna de probabilidad",
-                data=f,
-                file_name="resultados_probabilidad.gpkg",
-                mime="application/octet-stream"
-            )
+                fig = px.bar(
+                    conteo_df,
+                    x="Rango",
+                    y="Cantidad",
+                    color="Rango",
+                    title="Cantidad de puntos por rango de probabilidad",
+                    color_discrete_sequence=px.colors.sequential.YlGnBu,
+                    text="Cantidad"
+                )
+                fig.update_layout(xaxis_title="Rango de probabilidad", yaxis_title="Número de puntos")
+                st.plotly_chart(fig, use_container_width=True)
+
+                st.markdown("### Estadísticas adicionales:")
+                st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
+                st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
+                st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
+                st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
+
+                st.markdown("### Descargar archivo con resultados")
+                output_path = f"/tmp/resultados_{nombre_modelo.lower()}.gpkg"
+                gdf_resultado.to_file(output_path, driver="GPKG")
+                with open(output_path, "rb") as f:
+                    st.download_button(
+                        label=f"Descargar GPKG - {nombre_modelo}",
+                        data=f,
+                        file_name=f"resultados_{nombre_modelo.lower()}.gpkg",
+                        mime="application/octet-stream"
+                    )
 
     except Exception as e:
         st.error(f"❌ Error durante la predicción: {e}")
