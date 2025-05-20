@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import geopandas as gpd
 import folium
+import plotly.express as px
 from shapely.geometry import Polygon
 from streamlit_folium import st_folium
 from src.back.ModelController import ModelController
@@ -100,12 +101,20 @@ if uploaded_gpkg is not None:
         )
         conteo = gdf_resultado["rango_probabilidad"].value_counts().sort_index()
 
-        fig, ax = plt.subplots(figsize=(8, 5))
-        sns.barplot(x=conteo.index, y=conteo.values, palette="coolwarm", ax=ax)
-        ax.set_title("Cantidad de puntos por rango de probabilidad")
-        ax.set_xlabel("Rango de probabilidad")
-        ax.set_ylabel("Número de puntos")
-        st.pyplot(fig)
+        conteo_df = conteo.reset_index()
+        conteo_df.columns = ["Rango", "Cantidad"]
+        
+        fig = px.bar(
+            conteo_df,
+            x="Rango",
+            y="Cantidad",
+            color="Rango",
+            title="Cantidad de puntos por rango de probabilidad",
+            color_discrete_sequence=px.colors.sequential.YlGnBu,
+            text="Cantidad"
+        )
+        fig.update_layout(xaxis_title="Rango de probabilidad", yaxis_title="Número de puntos")
+        st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("### Estadísticas adicionales:")
         st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
