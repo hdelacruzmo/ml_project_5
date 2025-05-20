@@ -72,7 +72,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
 
 
 # -------------------------------
-#  PREDICCIÓN DESDE GPKG - DOS MODELOS
+#  PREDICCIÓN DESDE GPKG - TRES MODELOS
 # -------------------------------
 st.markdown("---")
 st.header("Predicción y resumen estadístico")
@@ -83,13 +83,22 @@ if uploaded_gpkg is not None:
     try:
         gdf_input = gpd.read_file(uploaded_gpkg)
 
-        tab1, tab2 = st.tabs(["Modelo 1: MaxEnt", "Modelo 2: Alternativo"])
+        tab1, tab2, tab3 = st.tabs([
+            "Modelo 1: MaxEnt",
+            "Modelo 2: Alternativo",
+            "Modelo 3: Random Forest"
+        ])
 
-        for nombre_modelo, gdf_resultado in [
+        modelos = [
             ("MaxEnt", ctrl.predict_from_gdf(gdf_input)),
-            ("Alternativo", ctrl.predict_with_second_model(gdf_input))
-        ]:
-            with (tab1 if nombre_modelo == "MaxEnt" else tab2):
+            ("Alternativo", ctrl.predict_with_second_model(gdf_input)),
+            ("Random Forest", ctrl.predict_with_third_model(gdf_input))
+        ]
+
+        for nombre_modelo, gdf_resultado in modelos:
+            tab = tab1 if nombre_modelo == "MaxEnt" else tab2 if nombre_modelo == "Alternativo" else tab3
+
+            with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
                 st.dataframe(gdf_resultado.drop(columns="geometry").head())
 
@@ -124,13 +133,13 @@ if uploaded_gpkg is not None:
                 st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
 
                 st.markdown("### Descargar archivo con resultados")
-                output_path = f"/tmp/resultados_{nombre_modelo.lower()}.gpkg"
+                output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
                 gdf_resultado.to_file(output_path, driver="GPKG")
                 with open(output_path, "rb") as f:
                     st.download_button(
                         label=f"Descargar GPKG - {nombre_modelo}",
                         data=f,
-                        file_name=f"resultados_{nombre_modelo.lower()}.gpkg",
+                        file_name=f"resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg",
                         mime="application/octet-stream"
                     )
 
