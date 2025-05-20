@@ -29,7 +29,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
                 gdf = gdf.to_crs(epsg=4326)
 
             st.write("Vista previa del archivo:")
-            st.dataframe(gdf.head())
+            st.dataframe(gdf.head(20))
 
             gdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty]
             bounds = gdf.total_bounds
@@ -100,7 +100,7 @@ if uploaded_gpkg is not None:
 
             with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
-                st.dataframe(gdf_resultado.drop(columns="geometry").head())
+                st.dataframe(gdf_resultado.drop(columns="geometry"),height=400)
 
                 st.subheader("Estadísticas por rangos de probabilidad")
 
