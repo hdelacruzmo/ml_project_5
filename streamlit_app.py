@@ -161,6 +161,35 @@ if uploaded_gpkg is not None:
                 st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
                 st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
 
+                st.markdown("### Métricas de evaluación")
+                
+                if "tipo_punto" in gdf_resultado.columns:
+                    y_true = gdf_resultado["tipo_punto"]
+                    y_pred = (gdf_resultado["probabilidad"] >= 0.5).astype(int)
+                
+                    # 🔹 Classification Report
+                    st.markdown("**Classification Report**")
+                    report = classification_report(y_true, y_pred, output_dict=True)
+                    report_df = pd.DataFrame(report).transpose()
+                    st.dataframe(report_df, height=200, use_container_width=True)
+                
+                    # 🔸 Matriz de Confusión
+                    st.markdown("**Matriz de Confusión**")
+                    conf_matrix = confusion_matrix(y_true, y_pred)
+                    fig_cm, ax_cm = plt.subplots()
+                    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap="Blues", xticklabels=[0,1], yticklabels=[0,1])
+                    ax_cm.set_xlabel("Predicción")
+                    ax_cm.set_ylabel("Real")
+                    st.pyplot(fig_cm)
+                
+                    # 🔻 Curva ROC
+                    st.markdown("**Curva ROC**")
+                    fig_roc, ax_roc = plt.subplots()
+                    RocCurveDisplay.from_predictions(y_true, gdf_resultado["probabilidad"], ax=ax_roc)
+                    st.pyplot(fig_roc)
+                else:
+                    st.warning("⚠️ No se encontró la columna 'tipo_punto' para calcular métricas.")
+                
                 st.markdown("### Descargar archivo con resultados")
                 output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
                 gdf_resultado.to_file(output_path, driver="GPKG")
