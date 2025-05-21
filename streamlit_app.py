@@ -105,22 +105,37 @@ if uploaded_gpkg is not None:
 
             with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
-                st.markdown("### Mapa estático del modelo")
 
-                # Extraer coordenadas
-                x_coords = gdf_resultado.geometry.x
-                y_coords = gdf_resultado.geometry.y
-                probs = gdf_resultado["probabilidad"]
+                ### acá
+
+                col1, col2 = st.columns(2)
                 
-                # Crear figura
-                fig, ax = plt.subplots(figsize=(4, 4))
+                with col1:
+                    st.markdown("### Mapa estático del modelo")
+                    x_coords = gdf_resultado.geometry.x
+                    y_coords = gdf_resultado.geometry.y
+                    probs = gdf_resultado["probabilidad"]
                 
-                # Crear scatter con colormap segmentado
-                scatter = ax.scatter(
-                    x_coords, y_coords, c=probs,
-                    cmap="viridis", s=3, edgecolor="none",
-                    vmin=0, vmax=1
-                )
+                    fig, ax = plt.subplots(figsize=(4, 4))
+                    scatter = ax.scatter(
+                        x_coords, y_coords, c=probs,
+                        cmap="viridis", s=3, edgecolor="none",
+                        vmin=0, vmax=1
+                    )
+                    cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
+                    cbar.set_label("Probabilidad")
+                    ax.set_title(f"Distribución espacial de probabilidad")
+                    ax.axis("off")
+                    st.pyplot(fig)
+                
+                with col2:
+                    st.markdown("### Estadísticas adicionales:")
+                    st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
+                    st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
+                    st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
+                    st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
+
+
                 
                 # Añadir barra de color
                 cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
@@ -197,13 +212,6 @@ if uploaded_gpkg is not None:
                 )
                 fig.update_layout(xaxis_title="Rango de probabilidad", yaxis_title="Número de puntos")
                 st.plotly_chart(fig, use_container_width=True)
-
-                ### Estadísticas adicionales
-                st.markdown("### Estadísticas adicionales:")
-                st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
-                st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
-                st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
-                st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
 
                 ### Exploración interactiva por variable
                 st.markdown("### Exploración interactiva por variable")
