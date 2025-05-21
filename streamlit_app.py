@@ -143,18 +143,27 @@ if uploaded_gpkg is not None:
                 conteo_df = conteo.reset_index()
                 conteo_df.columns = ["Rango", "Cantidad"]
 
+                # Definir colores fijos en orden de los labels
+                viridis_5 = {
+                    "0–0.2": "#440154",
+                    "0.2–0.4": "#3b528b",
+                    "0.4–0.6": "#21918c",
+                    "0.6–0.8": "#5ec962",
+                    "0.8–1": "#fde725"
+                }
+                
                 fig = px.bar(
                     conteo_df,
                     x="Rango",
                     y="Cantidad",
                     color="Rango",
                     title="Cantidad de puntos por rango de probabilidad",
-                    color_discrete_sequence=px.colors.sequential.YlGnBu,
-                    text="Cantidad"
+                    text="Cantidad",
+                    color_discrete_map=viridis_5
                 )
                 fig.update_layout(xaxis_title="Rango de probabilidad", yaxis_title="Número de puntos")
                 st.plotly_chart(fig, use_container_width=True)
-                
+
                 ### Estadísticas adicionales
                 st.markdown("### Estadísticas adicionales:")
                 st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
@@ -194,7 +203,7 @@ if uploaded_gpkg is not None:
                 probs = gdf_resultado["probabilidad"]
                 
                 # Crear figura
-                fig, ax = plt.subplots(figsize=(4, 2))
+                fig, ax = plt.subplots(figsize=(4, 4))
                 
                 # Crear scatter con colormap segmentado
                 scatter = ax.scatter(
