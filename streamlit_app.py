@@ -185,6 +185,22 @@ if uploaded_gpkg is not None:
                 fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)
 
+                st.markdown("### Distribución por rangos de probabilidad")
+                
+                var_y = st.selectbox("Variable para análisis de dispersión", variables_numericas, key=f"box_{nombre_modelo}")
+                
+                # Reusar los rangos que ya calculaste
+                fig_box = px.box(
+                    tabla_mostrar.assign(rango=gdf_resultado["rango_probabilidad"]),
+                    x="rango",
+                    y=var_y,
+                    color="rango",
+                    title=f"{var_y} por rango de probabilidad",
+                    points="all"
+                )
+                fig_box.update_layout(height=400)
+                st.plotly_chart(fig_box, use_container_width=True)
+
                 
                 st.markdown("### Descargar archivo con resultados")
                 output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
