@@ -29,7 +29,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
                 gdf = gdf.to_crs(epsg=4326)
 
             st.write("Vista previa del archivo:")
-            st.dataframe(gdf.head(20))
+            st.dataframe(gdf, height=500, use_container_width=True)
 
             gdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty]
             bounds = gdf.total_bounds
