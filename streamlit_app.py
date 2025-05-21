@@ -92,13 +92,13 @@ if uploaded_gpkg is not None:
         ])
 
         modelos = [
-            ("MaxEnt", ctrl.predict_from_gdf(gdf_input)),
-            ("Alternativo", ctrl.predict_with_second_model(gdf_input)),
-            ("Random Forest", ctrl.predict_with_third_model(gdf_input))
+            ("Modelo 1 : Regresión Logística (MaxEnt)", ctrl.predict_from_gdf(gdf_input)),
+            ("Modelo 2 : Ensamble de Regresiones", ctrl.predict_with_second_model(gdf_input)),
+            ("Modelo 3 : Random Forest", ctrl.predict_with_third_model(gdf_input))
         ]
 
         for nombre_modelo, gdf_resultado in modelos:
-            tab = tab1 if nombre_modelo == "MaxEnt" else tab2 if nombre_modelo == "Alternativo" else tab3
+            tab = tab1 if nombre_modelo == "Modelo 1 : Regresión Logística (MaxEnt)" else tab2 if nombre_modelo == "Modelo 2 : Ensamble de Regresiones" else tab3
 
             with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
@@ -171,7 +171,7 @@ if uploaded_gpkg is not None:
 
         # 🟦 Cuarta pestaña — COMPARACIÓN POR UMBRAL
         with tab4:
-            st.subheader("🎯 Coincidencias por umbral en los tres modelos")
+            st.subheader("Coincidencias por umbral en los tres modelos")
 
             umbral = st.number_input("Selecciona el umbral mínimo", min_value=0.0, max_value=1.0, step=0.01, value=0.8)
 
