@@ -28,7 +28,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
                 st.info(f" Reproyectando desde {gdf.crs} a EPSG:4326 para visualización.")
                 gdf = gdf.to_crs(epsg=4326)
 
-            st.write("Vista previa del archivo:")
+            st.write("Vista previa de los datos de tu archivo:")
             st.dataframe(gdf, height=500, use_container_width=True)
 
             gdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty]
