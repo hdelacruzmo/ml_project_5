@@ -119,12 +119,12 @@ if uploaded_gpkg is not None:
                     fig, ax = plt.subplots(figsize=(1.5, 1.5))
                     scatter = ax.scatter(
                         x_coords, y_coords, c=probs,
-                        cmap="viridis", s=3, edgecolor="none",
+                        cmap="viridis", s=2, edgecolor="none",
                         vmin=0, vmax=1
                     )
                     cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
-                    cbar.set_label("Probabilidad")
-                    ax.set_title("Distribución espacial de probabilidad")
+                    cbar.set_label("Probabilidad", fontsize=10)
+                    ax.set_title("Distribución espacial de probabilidad", fontsize=12)
                     ax.axis("off")
                     st.pyplot(fig)
                 
