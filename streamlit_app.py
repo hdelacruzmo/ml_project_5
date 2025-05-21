@@ -30,7 +30,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
 
             st.write("Vista previa de los datos de tu archivo:")
             st.dataframe(gdf, height=500, use_container_width=True)
-
+            st.write("Vista geográfica del área de estudio:")
             gdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty]
             bounds = gdf.total_bounds
             minx, miny, maxx, maxy = bounds
