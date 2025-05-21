@@ -101,7 +101,7 @@ if uploaded_gpkg is not None:
 
             with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
-                st.dataframe(gdf_resultado.drop(columns="geometry"), height=400)
+                st.dataframe(gdf_resultado.drop(columns="geometry"), height=400, use_container_width=True)
 
                 st.subheader("Estadísticas por rangos de probabilidad")
                 bins = [0, 0.2, 0.4, 0.6, 0.8, 1.01]
@@ -161,7 +161,7 @@ if uploaded_gpkg is not None:
             ]
 
             st.markdown(f"🔎 Se encontraron **{len(seleccionados)} puntos** donde los tres modelos tienen probabilidad ≥ {umbral:.2f}")
-            st.dataframe(seleccionados.drop(columns='geometry'), height=500)
+            st.dataframe(seleccionados.drop(columns='geometry'), height=500, use_container_width=True)
 
             salida_path = "/tmp/seleccionados_tres_modelos.gpkg"
             seleccionados_gdf = gpd.GeoDataFrame(seleccionados, geometry="geometry", crs=modelos[0][1].crs)
