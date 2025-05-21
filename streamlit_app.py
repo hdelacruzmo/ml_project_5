@@ -111,7 +111,22 @@ if uploaded_gpkg is not None:
                         "Dens_EventoCombatiente": "Dens_Comb"
                     })
                 )
-                st.dataframe(tabla_mostrar, height=400, use_container_width=True)
+                #color en la columna probabilidad
+                st.dataframe(
+                    tabla_mostrar,
+                    height=400,
+                    use_container_width=True,
+                    column_config={
+                        "probabilidad": st.column_config.NumberColumn(
+                            "Probabilidad",
+                            help="Probabilidad de presencia (0 = baja, 1 = alta)",
+                            min_value=0.0,
+                            max_value=1.0,
+                            format="%.2f"
+                        )
+                    }
+                )
+                #st.dataframe(tabla_mostrar, height=400, use_container_width=True)
                 
                 st.subheader("Estadísticas por rangos de probabilidad")
                 bins = [0, 0.2, 0.4, 0.6, 0.8, 1.01]
