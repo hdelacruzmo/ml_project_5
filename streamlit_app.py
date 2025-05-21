@@ -108,8 +108,8 @@ if uploaded_gpkg is not None:
 
                 ### acá
 
-             col1, col2 = st.columns([1, 1])
-            
+            col1, col2 = st.columns([1, 1])
+
             with col1:
                 st.markdown("### Mapa estático del modelo")
                 x_coords = gdf_resultado.geometry.x
