@@ -186,6 +186,8 @@ if uploaded_gpkg is not None:
                 fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)
 
+                '''
+                ### Distribución por rangos de probabilidad
                 st.markdown("### Distribución por rangos de probabilidad")
 
                 # Asegúrate de usar solo columnas numéricas distintas de probabilidad y tipo_punto
@@ -213,7 +215,7 @@ if uploaded_gpkg is not None:
                     st.plotly_chart(fig_box, use_container_width=True)
                 else:
                     st.info("No se encontraron variables numéricas válidas para graficar.")
-
+                '''
                 
                 ### Descargar archivo con resultados
                 st.markdown("### Descargar archivo con resultados")
