@@ -29,7 +29,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
                 gdf = gdf.to_crs(epsg=4326)
 
             st.write("Vista previa del archivo:")
-            st.dataframe(gdf, height=500, use_container_width=True)
+            st.dataframe(gdf, height=500, use_container_width=True, disabled=True)
 
             gdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty]
             bounds = gdf.total_bounds
@@ -161,7 +161,7 @@ if uploaded_gpkg is not None:
             ]
 
             st.markdown(f"🔎 Se encontraron **{len(seleccionados)} puntos** donde los tres modelos tienen probabilidad ≥ {umbral:.2f}")
-            st.dataframe(seleccionados.drop(columns='geometry'), height=500, use_container_width=True)
+            st.data_editor(df.drop(columns="geometry"), height=500, use_container_width=True, disabled=True)
 
             salida_path = "/tmp/seleccionados_tres_modelos.gpkg"
             seleccionados_gdf = gpd.GeoDataFrame(seleccionados, geometry="geometry", crs=modelos[0][1].crs)
