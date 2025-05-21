@@ -9,7 +9,7 @@ from streamlit_folium import st_folium
 from src.back.ModelController import ModelController
 
 st.set_page_config(layout="wide", page_title="MaxEnt - Visualizador", page_icon="Sitios Búsquedaﾠ")
-st.title(" Visualizador y Predicción con Modelo Regresión logística")
+st.title(" Delimitación de áreas de interés forense usando Machine Learning y análisis espacial en el Bajo Cauca​")
 
 # -------------------------------
 #  VISUALIZACIÓN DEL GPKG
