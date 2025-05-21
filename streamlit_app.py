@@ -154,14 +154,15 @@ if uploaded_gpkg is not None:
                 )
                 fig.update_layout(xaxis_title="Rango de probabilidad", yaxis_title="Número de puntos")
                 st.plotly_chart(fig, use_container_width=True)
-               
+                
+                ### Estadísticas adicionales
                 st.markdown("### Estadísticas adicionales:")
                 st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
                 st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
                 st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
                 st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
 
-
+                ### Exploración interactiva por variable
                 st.markdown("### Exploración interactiva por variable")
 
                 # Variables predictoras (excepto probabilidad y tipo_punto)
@@ -185,23 +186,8 @@ if uploaded_gpkg is not None:
                 fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)
 
-                st.markdown("### Histograma ponderado por probabilidad")
 
-                var_hist = st.selectbox("Variable para histograma", variables_numericas, key=f"hist_{nombre_modelo}")
-                
-                fig_hist = px.histogram(
-                    tabla_mostrar,
-                    x=var_hist,
-                    color="probabilidad",
-                    color_continuous_scale="Viridis",
-                    nbins=30,
-                    title=f"Distribución de {var_hist} ponderada por probabilidad"
-                )
-                fig_hist.update_layout(height=400)
-                st.plotly_chart(fig_hist, use_container_width=True)
-
-
-                
+                ### Descargar archivo con resultados
                 st.markdown("### Descargar archivo con resultados")
                 output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
                 gdf_resultado.to_file(output_path, driver="GPKG")
