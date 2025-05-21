@@ -203,7 +203,7 @@ if uploaded_gpkg is not None:
                 probs = gdf_resultado["probabilidad"]
                 
                 # Crear figura
-                fig, ax = plt.subplots(figsize=(4, 4))
+                fig, ax = plt.subplots(figsize=(4, 3))
                 
                 # Crear scatter con colormap segmentado
                 scatter = ax.scatter(
