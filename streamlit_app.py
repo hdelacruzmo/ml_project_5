@@ -92,9 +92,9 @@ if uploaded_gpkg is not None:
         ])
 
         modelos = [
-            ("MaxEnt", ctrl.predict_from_gdf(gdf_input)),
-            ("Alternativo", ctrl.predict_with_second_model(gdf_input)),
-            ("Random Forest", ctrl.predict_with_third_model(gdf_input))
+            ("Modelo 1 : Regresión Logística (MaxEnt)", ctrl.predict_from_gdf(gdf_input)),
+            ("Modelo 2 : Ensamble de Regresiones", ctrl.predict_with_second_model(gdf_input)),
+            ("Modelo 3 : Random Forest", ctrl.predict_with_third_model(gdf_input))
         ]
 
         for nombre_modelo, gdf_resultado in modelos:
