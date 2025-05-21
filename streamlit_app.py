@@ -76,7 +76,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
 #  PREDICCIÓN DESDE GPKG - TRES MODELOS
 # -------------------------------
 st.markdown("---")
-st.header("Predicción y resumen estadístico")
+st.header("Estimación de probabilidad de sitio de interés para la búsqueda")
 
 ctrl = ModelController()
 
