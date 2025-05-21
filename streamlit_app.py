@@ -108,32 +108,36 @@ if uploaded_gpkg is not None:
 
                 ### acá
 
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.markdown("### Mapa estático del modelo")
-                    x_coords = gdf_resultado.geometry.x
-                    y_coords = gdf_resultado.geometry.y
-                    probs = gdf_resultado["probabilidad"]
-                
-                    fig, ax = plt.subplots(figsize=(4, 4))
-                    scatter = ax.scatter(
-                        x_coords, y_coords, c=probs,
-                        cmap="viridis", s=3, edgecolor="none",
-                        vmin=0, vmax=1
-                    )
-                    cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
-                    cbar.set_label("Probabilidad")
-                    ax.set_title(f"Distribución espacial de probabilidad")
-                    ax.axis("off")
-                    st.pyplot(fig)
-                
-                with col2:
-                    st.markdown("### Estadísticas Generales:")
-                    st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
-                    st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
-                    st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
-                    st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
+             col1, col2 = st.columns([1, 1])
+            
+            with col1:
+                st.markdown("### Mapa estático del modelo")
+                x_coords = gdf_resultado.geometry.x
+                y_coords = gdf_resultado.geometry.y
+                probs = gdf_resultado["probabilidad"]
+            
+                fig, ax = plt.subplots(figsize=(3.5, 3.5))
+                scatter = ax.scatter(
+                    x_coords, y_coords, c=probs,
+                    cmap="viridis", s=3, edgecolor="none",
+                    vmin=0, vmax=1
+                )
+                cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
+                cbar.set_label("Probabilidad")
+                ax.set_title("Distribución espacial de probabilidad")
+                ax.axis("off")
+                st.pyplot(fig)
+            
+            with col2:
+                # Espaciador vertical
+                st.markdown("<div style='height: 80px;'></div>", unsafe_allow_html=True)
+            
+                st.markdown("### Estadísticas Generales:")
+                st.markdown(f"- **Número total de puntos**: {len(gdf_resultado)}")
+                st.markdown(f"- **Probabilidad promedio**: {gdf_resultado['probabilidad'].mean():.3f}")
+                st.markdown(f"- **Máxima**: {gdf_resultado['probabilidad'].max():.3f} | **Mínima**: {gdf_resultado['probabilidad'].min():.3f}")
+                st.markdown(f"- **Puntos con probabilidad ≥ 0.8**: {(gdf_resultado['probabilidad'] >= 0.8).sum()}")
+
 
                 tabla_mostrar = (
                     gdf_resultado
