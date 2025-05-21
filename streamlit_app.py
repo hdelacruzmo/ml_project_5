@@ -129,31 +129,12 @@ if uploaded_gpkg is not None:
                     st.pyplot(fig)
                 
                 with col2:
-                    st.markdown("### Estadísticas adicionales:")
+                    st.markdown("### Estadísticas Generales:")
                     st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
                     st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
                     st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
                     st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
 
-
-                
-                # Añadir barra de color
-                cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
-                cbar.set_label("Probabilidad")
-                
-                # Opcional: agregar cortes visuales por rango
-                bins = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
-                labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
-                gdf_resultado["rango"] = pd.cut(probs, bins=bins, labels=labels)
-                
-                ax.set_title(f"Distribución espacial de probabilidad ({nombre_modelo})")
-                ax.axis("off")
-                
-                st.pyplot(fig)
-
-
-                
-                
                 tabla_mostrar = (
                     gdf_resultado
                     .drop(columns=["geometry", "FID_Mina"], errors="ignore")
