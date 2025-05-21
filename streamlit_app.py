@@ -30,6 +30,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
 
             st.write("Vista previa de los datos de tu archivo:")
             st.dataframe(gdf, height=500, use_container_width=True)
+            
             st.write("Vista geográfica del área de estudio:")
             gdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty]
             bounds = gdf.total_bounds
@@ -64,8 +65,8 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
             mapa.fit_bounds([[miny, minx], [maxy, maxx]])
             folium.LayerControl(collapsed=False).add_to(mapa)
 
-            st_folium(mapa, width=900, height=500)
-
+            #st_folium(mapa, width=900, height=500)
+            st_folium(mapa, width='100%', height=600)
 
         except Exception as e:
             st.error(f"❌ Error leyendo el archivo: {e}")
