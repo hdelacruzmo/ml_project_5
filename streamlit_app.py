@@ -185,21 +185,21 @@ if uploaded_gpkg is not None:
                 fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)
 
-                st.markdown("### Distribución por rangos de probabilidad")
+                st.markdown("### Histograma ponderado por probabilidad")
+
+                var_hist = st.selectbox("Variable para histograma", variables_numericas, key=f"hist_{nombre_modelo}")
                 
-                var_y = st.selectbox("Variable para análisis de dispersión", variables_numericas, key=f"box_{nombre_modelo}")
-                
-                # Reusar los rangos que ya calculaste
-                fig_box = px.box(
-                    tabla_mostrar.assign(rango=gdf_resultado["rango_probabilidad"]),
-                    x="rango",
-                    y=var_y,
-                    color="rango",
-                    title=f"{var_y} por rango de probabilidad",
-                    points="all"
+                fig_hist = px.histogram(
+                    tabla_mostrar,
+                    x=var_hist,
+                    color="probabilidad",
+                    color_continuous_scale="Viridis",
+                    nbins=30,
+                    title=f"Distribución de {var_hist} ponderada por probabilidad"
                 )
-                fig_box.update_layout(height=400)
-                st.plotly_chart(fig_box, use_container_width=True)
+                fig_hist.update_layout(height=400)
+                st.plotly_chart(fig_hist, use_container_width=True)
+
 
                 
                 st.markdown("### Descargar archivo con resultados")
