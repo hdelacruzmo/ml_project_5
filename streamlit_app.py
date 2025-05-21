@@ -29,7 +29,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
                 gdf = gdf.to_crs(epsg=4326)
 
             st.write("Vista previa del archivo:")
-            st.dataframe(gdf, height=500, use_container_width=True)
+            st.dataframe(gdf.head())
 
             gdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty]
             bounds = gdf.total_bounds
@@ -72,7 +72,7 @@ with st.expander(" Ver área geográfica cubierta (.gpkg)"):
 
 
 # -------------------------------
-#  PREDICCIÓN DESDE GPKG - TRES MODELOS
+#  PREDICCIÓN DESDE GPKG - DOS MODELOS
 # -------------------------------
 st.markdown("---")
 st.header("Predicción y resumen estadístico")
@@ -83,25 +83,15 @@ if uploaded_gpkg is not None:
     try:
         gdf_input = gpd.read_file(uploaded_gpkg)
 
-        tab1, tab2, tab3, tab4 = st.tabs([
-            "Modelo 1: MaxEnt",
-            "Modelo 2: Alternativo",
-            "Modelo 3: Random Forest",
-            "Comparación por umbral"
-        ])
+        tab1, tab2 = st.tabs(["Modelo 1: MaxEnt", "Modelo 2: Alternativo"])
 
-        modelos = [
+        for nombre_modelo, gdf_resultado in [
             ("MaxEnt", ctrl.predict_from_gdf(gdf_input)),
-            ("Alternativo", ctrl.predict_with_second_model(gdf_input)),
-            ("Random Forest", ctrl.predict_with_third_model(gdf_input))
-        ]
-
-        for nombre_modelo, gdf_resultado in modelos:
-            tab = tab1 if nombre_modelo == "MaxEnt" else tab2 if nombre_modelo == "Alternativo" else tab3
-
-            with tab:
+            ("Alternativo", ctrl.predict_with_second_model(gdf_input))
+        ]:
+            with (tab1 if nombre_modelo == "MaxEnt" else tab2):
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
-                st.dataframe(gdf_resultado.drop(columns="geometry"),height=400)
+                st.dataframe(gdf_resultado.drop(columns="geometry").head())
 
                 st.subheader("Estadísticas por rangos de probabilidad")
 
@@ -134,21 +124,18 @@ if uploaded_gpkg is not None:
                 st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
 
                 st.markdown("### Descargar archivo con resultados")
-                output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
+                output_path = f"/tmp/resultados_{nombre_modelo.lower()}.gpkg"
                 gdf_resultado.to_file(output_path, driver="GPKG")
                 with open(output_path, "rb") as f:
                     st.download_button(
                         label=f"Descargar GPKG - {nombre_modelo}",
                         data=f,
-                        file_name=f"resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg",
+                        file_name=f"resultados_{nombre_modelo.lower()}.gpkg",
                         mime="application/octet-stream"
                     )
 
-    except Exception as e:
-        st.error(f"❌ Error durante la predicción: {e}")
 
-
-with tab4:
+        with tab4:
             st.subheader("🎯 Coincidencias por umbral en los tres modelos")
 
             umbral = st.number_input("Selecciona el umbral mínimo", min_value=0.0, max_value=1.0, step=0.01, value=0.8)
@@ -177,3 +164,7 @@ with tab4:
                     file_name="seleccionados_tres_modelos.gpkg",
                     mime="application/octet-stream"
                 )
+
+
+    except Exception as e:
+        st.error(f"❌ Error durante la predicción: {e}")
