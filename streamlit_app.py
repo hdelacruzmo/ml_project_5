@@ -194,12 +194,12 @@ if uploaded_gpkg is not None:
                 probs = gdf_resultado["probabilidad"]
                 
                 # Crear figura
-                fig, ax = plt.subplots(figsize=(8, 6))
+                fig, ax = plt.subplots(figsize=(6, 4))
                 
                 # Crear scatter con colormap segmentado
                 scatter = ax.scatter(
                     x_coords, y_coords, c=probs,
-                    cmap="viridis", s=8, edgecolor="none",
+                    cmap="viridis", s=5, edgecolor="none",
                     vmin=0, vmax=1
                 )
                 
