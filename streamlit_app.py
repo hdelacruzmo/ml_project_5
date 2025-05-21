@@ -184,58 +184,8 @@ if uploaded_gpkg is not None:
                 )
                 
                 fig.update_layout(height=600)
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)  
 
-                #
-                st.markdown("### Depuración previa al mapa")
-                st.write("Columnas disponibles:", gdf_resultado.columns.tolist())
-                st.write("Primeros valores de rango_probabilidad:", gdf_resultado["rango_probabilidad"].unique())
-                st.write("Cantidad de puntos:", len(gdf_resultado))
-                
-                # -------------------------------
-                # Mapa de puntos por rango de probabilidad
-                # -------------------------------
-                st.markdown("### Representación geográfica por rangos")
-                
-                try:
-                    if gdf_resultado.crs.to_epsg() != 4326:
-                        gdf_mapa = gdf_resultado.to_crs(epsg=4326)
-                    else:
-                        gdf_mapa = gdf_resultado.copy()
-                
-                    # Crear mapa base
-                    centro_mapa = gdf_mapa.unary_union.centroid
-                    mapa_rangos = folium.Map(location=[centro_mapa.y, centro_mapa.x], zoom_start=9, tiles="CartoDB positron")
-                
-                    # Definir colores por rango
-                    color_por_rango = {
-                        "0–0.2": "red",
-                        "0.2–0.4": "orange",
-                        "0.4–0.6": "yellow",
-                        "0.6–0.8": "lightgreen",
-                        "0.8–1": "green"
-                    }
-                
-                    # Agrupar y representar
-                    for rango, color in color_por_rango.items():
-                        sub = gdf_mapa[gdf_mapa["rango_probabilidad"] == rango]
-                        for _, row in sub.iterrows():
-                            folium.CircleMarker(
-                                location=[row.geometry.y, row.geometry.x],
-                                radius=3,
-                                color=color,
-                                fill=True,
-                                fill_opacity=0.7,
-                                popup=f"Prob: {row['probabilidad']:.2f} ({rango})"
-                            ).add_to(mapa_rangos)
-                
-                    folium.LayerControl().add_to(mapa_rangos)
-                    st_folium(mapa_rangos, height=500, width="100%")
-                
-                except Exception as e:
-                    st.warning(f"⚠️ No se pudo generar el mapa interactivo: {e}")
-
-                
                 ### Descargar archivo con resultados
                 st.markdown("### Descargar archivo con resultados")
                 output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
