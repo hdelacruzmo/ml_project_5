@@ -101,10 +101,9 @@ if uploaded_gpkg is not None:
 
             with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
-                st.dataframe(gdf_resultado.drop(columns="geometry"),height=400)
+                st.dataframe(gdf_resultado.drop(columns="geometry"), height=400)
 
                 st.subheader("Estadísticas por rangos de probabilidad")
-
                 bins = [0, 0.2, 0.4, 0.6, 0.8, 1.01]
                 labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
                 gdf_resultado["rango_probabilidad"] = pd.cut(
@@ -144,36 +143,36 @@ if uploaded_gpkg is not None:
                         mime="application/octet-stream"
                     )
 
+        # 🟦 Cuarta pestaña — COMPARACIÓN POR UMBRAL
+        with tab4:
+            st.subheader("🎯 Coincidencias por umbral en los tres modelos")
+
+            umbral = st.number_input("Selecciona el umbral mínimo", min_value=0.0, max_value=1.0, step=0.01, value=0.8)
+
+            comparado = modelos[0][1][["probabilidad"]].rename(columns={"probabilidad": "prob_modelo_1"}).copy()
+            comparado["prob_modelo_2"] = modelos[1][1]["probabilidad"].values
+            comparado["prob_modelo_3"] = modelos[2][1]["probabilidad"].values
+            comparado["geometry"] = modelos[0][1].geometry.values
+
+            seleccionados = comparado[
+                (comparado["prob_modelo_1"] >= umbral) &
+                (comparado["prob_modelo_2"] >= umbral) &
+                (comparado["prob_modelo_3"] >= umbral)
+            ]
+
+            st.markdown(f"🔎 Se encontraron **{len(seleccionados)} puntos** donde los tres modelos tienen probabilidad ≥ {umbral:.2f}")
+            st.dataframe(seleccionados.drop(columns='geometry'), height=500)
+
+            salida_path = "/tmp/seleccionados_tres_modelos.gpkg"
+            seleccionados_gdf = gpd.GeoDataFrame(seleccionados, geometry="geometry", crs=modelos[0][1].crs)
+            seleccionados_gdf.to_file(salida_path, driver="GPKG")
+            with open(salida_path, "rb") as f:
+                st.download_button(
+                    label="📥 Descargar selección como GPKG",
+                    data=f,
+                    file_name="seleccionados_tres_modelos.gpkg",
+                    mime="application/octet-stream"
+                )
+
     except Exception as e:
         st.error(f"❌ Error durante la predicción: {e}")
-
-with tab4:
-    st.subheader("🎯 Coincidencias por umbral en los tres modelos")
-
-    umbral = st.number_input("Selecciona el umbral mínimo", min_value=0.0, max_value=1.0, step=0.01, value=0.8)
-
-    comparado = modelos[0][1][["probabilidad"]].rename(columns={"probabilidad": "prob_modelo_1"}).copy()
-    comparado["prob_modelo_2"] = modelos[1][1]["probabilidad"].values
-    comparado["prob_modelo_3"] = modelos[2][1]["probabilidad"].values
-    comparado["geometry"] = modelos[0][1].geometry.values
-
-    seleccionados = comparado[
-        (comparado["prob_modelo_1"] >= umbral) &
-        (comparado["prob_modelo_2"] >= umbral) &
-        (comparado["prob_modelo_3"] >= umbral)
-    ]
-
-    st.markdown(f"🔎 Se encontraron **{len(seleccionados)} puntos** donde los tres modelos tienen probabilidad ≥ {umbral:.2f}")
-    st.dataframe(seleccionados.drop(columns='geometry'), height=500)
-
-    salida_path = "/tmp/seleccionados_tres_modelos.gpkg"
-    seleccionados_gdf = gpd.GeoDataFrame(seleccionados, geometry="geometry", crs=modelos[0][1].crs)
-    seleccionados_gdf.to_file(salida_path, driver="GPKG")
-    with open(salida_path, "rb") as f:
-        st.download_button(
-            label="📥 Descargar selección como GPKG",
-            data=f,
-            file_name="seleccionados_tres_modelos.gpkg",
-            mime="application/octet-stream"
-        )
-
