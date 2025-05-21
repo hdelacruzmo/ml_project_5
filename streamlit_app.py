@@ -116,7 +116,7 @@ if uploaded_gpkg is not None:
                     y_coords = gdf_resultado.geometry.y
                     probs = gdf_resultado["probabilidad"]
                 
-                    fig, ax = plt.subplots(figsize=(2, 2))
+                    fig, ax = plt.subplots(figsize=(1.5, 1.5))
                     scatter = ax.scatter(
                         x_coords, y_coords, c=probs,
                         cmap="viridis", s=3, edgecolor="none",
