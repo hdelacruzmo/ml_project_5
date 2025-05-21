@@ -31,4 +31,15 @@ class ModelController:
         gdf["probabilidad"] = np.round(modelo_3.predict_proba(atributos)[:, 1], 4)
         return gdf
 
+    def obtener_modelo(self, nombre_modelo):
+        if nombre_modelo == "MaxEnt":
+            return joblib.load(osp.join(self.model_path, "maxent_model.joblib"))
+        elif nombre_modelo == "Alternativo":
+            return joblib.load(osp.join(self.model_path, "maxent_model_ensamble.joblib"))
+        elif nombre_modelo == "Random Forest":
+            return joblib.load(osp.join(self.model_path, "randomforest_model.joblib"))
+        else:
+            raise ValueError("Modelo no reconocido.")
+
+
 
