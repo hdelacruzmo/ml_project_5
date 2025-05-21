@@ -85,10 +85,10 @@ if uploaded_gpkg is not None:
         gdf_input = gpd.read_file(uploaded_gpkg)
 
         tab1, tab2, tab3, tab4 = st.tabs([
-            "1. Modelo : Regresión Logística (MaxEnt)",
-            "2. Modelo : Ensamble de Regresiones",
-            "3. Modelo : Random Forest",
-            "4. Comparación por umbral"
+            "Modelo 1 : Regresión Logística (MaxEnt)",
+            "Modelo 2 : Ensamble de Regresiones",
+            "Modelo 3 : Random Forest",
+            "Análisis : Comparación por umbral"
         ])
 
         modelos = [
