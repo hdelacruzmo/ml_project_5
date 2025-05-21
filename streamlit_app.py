@@ -116,7 +116,7 @@ if uploaded_gpkg is not None:
                     y_coords = gdf_resultado.geometry.y
                     probs = gdf_resultado["probabilidad"]
                 
-                    fig, ax = plt.subplots(figsize=(3.5, 3.5))
+                    fig, ax = plt.subplots(figsize=(3, 3))
                     scatter = ax.scatter(
                         x_coords, y_coords, c=probs,
                         cmap="viridis", s=3, edgecolor="none",
@@ -130,6 +130,8 @@ if uploaded_gpkg is not None:
                 
                 with col2:
                     # Espaciador vertical
+                    st.markdown("<div style='height: 80px;'></div>", unsafe_allow_html=True)
+                    st.markdown("<div style='height: 80px;'></div>", unsafe_allow_html=True)
                     st.markdown("<div style='height: 80px;'></div>", unsafe_allow_html=True)
                 
                     st.markdown("### Estadísticas Generales:")
