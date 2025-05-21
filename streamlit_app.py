@@ -4,9 +4,12 @@ import pandas as pd
 import geopandas as gpd
 import folium
 import plotly.express as px
+import matplotlib.pyplot as plt
+import seaborn as sns
 from shapely.geometry import Polygon
 from streamlit_folium import st_folium
 from src.back.ModelController import ModelController
+from sklearn.metrics import confusion_matrix, classification_report, RocCurveDisplay
 
 st.set_page_config(layout="wide", page_title="MaxEnt - Visualizador", page_icon="Sitios Búsquedaﾠ")
 st.title(" Delimitación de áreas de interés forense usando Machine Learning y análisis espacial en el Bajo Cauca​")
