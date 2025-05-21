@@ -186,37 +186,6 @@ if uploaded_gpkg is not None:
                 fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)
 
-                '''
-                ### Distribución por rangos de probabilidad
-                st.markdown("### Distribución por rangos de probabilidad")
-
-                # Asegúrate de usar solo columnas numéricas distintas de probabilidad y tipo_punto
-                variables_boxplot = [
-                    col for col in tabla_mostrar.columns
-                    if col not in ["probabilidad", "tipo_punto"] and pd.api.types.is_numeric_dtype(tabla_mostrar[col])
-                ]
-                
-                if variables_boxplot:
-                    var_y = st.selectbox("Variable para análisis por rango", variables_boxplot, key=f"box_{nombre_modelo}")
-                
-                    # Reusar los rangos que ya calculaste y asignarlos al dataframe
-                    tabla_con_rangos = tabla_mostrar.copy()
-                    tabla_con_rangos["rango"] = gdf_resultado["rango_probabilidad"]
-                
-                    fig_box = px.box(
-                        tabla_con_rangos,
-                        x="rango",
-                        y=var_y,
-                        color="rango",
-                        title=f"{var_y} por rango de probabilidad",
-                        points="all"
-                    )
-                    fig_box.update_layout(height=400)
-                    st.plotly_chart(fig_box, use_container_width=True)
-                else:
-                    st.info("No se encontraron variables numéricas válidas para graficar.")
-                '''
-                
                 ### Descargar archivo con resultados
                 st.markdown("### Descargar archivo con resultados")
                 output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
