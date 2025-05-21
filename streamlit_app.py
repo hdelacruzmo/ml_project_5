@@ -182,7 +182,7 @@ if uploaded_gpkg is not None:
                     hover_data=tabla_mostrar.columns
                 )
                 
-                fig.update_layout(height=400)
+                fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)
 
                 
