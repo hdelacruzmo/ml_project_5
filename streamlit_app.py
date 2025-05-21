@@ -186,6 +186,12 @@ if uploaded_gpkg is not None:
                 fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)
 
+                #
+                st.markdown("### Depuración previa al mapa")
+                st.write("Columnas disponibles:", gdf_resultado.columns.tolist())
+                st.write("Primeros valores de rango_probabilidad:", gdf_resultado["rango_probabilidad"].unique())
+                st.write("Cantidad de puntos:", len(gdf_resultado))
+                
                 # -------------------------------
                 # Mapa de puntos por rango de probabilidad
                 # -------------------------------
