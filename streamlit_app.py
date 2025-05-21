@@ -186,7 +186,7 @@ if uploaded_gpkg is not None:
             ]
 
             st.markdown(f"🔎 Se encontraron **{len(seleccionados)} puntos** donde los tres modelos tienen probabilidad ≥ {umbral:.2f}")
-            st.data_editor(df.drop(columns="geometry"), height=500, use_container_width=True, disabled=True)
+            st.data_editor(seleccionados.drop(columns="geometry"), height=500, use_container_width=True, disabled=True)
 
             salida_path = "/tmp/seleccionados_tres_modelos.gpkg"
             seleccionados_gdf = gpd.GeoDataFrame(seleccionados, geometry="geometry", crs=modelos[0][1].crs)
