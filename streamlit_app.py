@@ -101,8 +101,18 @@ if uploaded_gpkg is not None:
 
             with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
-                st.dataframe(gdf_resultado.drop(columns="geometry"), height=400, use_container_width=True)
-
+                tabla_mostrar = (
+                    gdf_resultado
+                    .drop(columns=["geometry", "FID_Mina"], errors="ignore")
+                    .rename(columns={
+                        "Num_PrediosURT": "PrediosURT",
+                        "Minas1000m": "Dens_Minas",
+                        "Dist_EventoCombatiente": "Dist_Comb",
+                        "Dens_EventoCombatiente": "Dens_Comb"
+                    })
+                )
+                st.dataframe(tabla_mostrar, height=400, use_container_width=True)
+                
                 st.subheader("Estadísticas por rangos de probabilidad")
                 bins = [0, 0.2, 0.4, 0.6, 0.8, 1.01]
                 labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
