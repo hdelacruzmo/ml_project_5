@@ -124,7 +124,7 @@ if uploaded_gpkg is not None:
                     )
                     cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
                     cbar.set_label("Probabilidad", fontsize=6)
-                    cbar.ax.tick_params(labelsize=8)
+                    cbar.ax.tick_params(labelsize=4)
                     ax.set_title("Distribución espacial de probabilidad", fontsize=8)
                     ax.axis("off")
                     st.pyplot(fig)
