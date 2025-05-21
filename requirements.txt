@@ -5,7 +5,7 @@ pandas
 plotly
 scikit-learn
 seaborn
-streamlit
+streamlit>=1.25
 geopandas
 streamlit-folium
 folium
