@@ -105,6 +105,40 @@ if uploaded_gpkg is not None:
 
             with tab:
                 st.subheader(f"Resultados del modelo {nombre_modelo}")
+                st.markdown("### Mapa estático del modelo")
+
+                # Extraer coordenadas
+                x_coords = gdf_resultado.geometry.x
+                y_coords = gdf_resultado.geometry.y
+                probs = gdf_resultado["probabilidad"]
+                
+                # Crear figura
+                fig, ax = plt.subplots(figsize=(4, 4))
+                
+                # Crear scatter con colormap segmentado
+                scatter = ax.scatter(
+                    x_coords, y_coords, c=probs,
+                    cmap="viridis", s=3, edgecolor="none",
+                    vmin=0, vmax=1
+                )
+                
+                # Añadir barra de color
+                cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
+                cbar.set_label("Probabilidad")
+                
+                # Opcional: agregar cortes visuales por rango
+                bins = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
+                labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
+                gdf_resultado["rango"] = pd.cut(probs, bins=bins, labels=labels)
+                
+                ax.set_title(f"Distribución espacial de probabilidad ({nombre_modelo})")
+                ax.axis("off")
+                
+                st.pyplot(fig)
+
+
+                
+                
                 tabla_mostrar = (
                     gdf_resultado
                     .drop(columns=["geometry", "FID_Mina"], errors="ignore")
@@ -195,36 +229,7 @@ if uploaded_gpkg is not None:
                 fig.update_layout(height=600)
                 st.plotly_chart(fig, use_container_width=True)  
 
-                st.markdown("### Mapa estático del modelo")
 
-                # Extraer coordenadas
-                x_coords = gdf_resultado.geometry.x
-                y_coords = gdf_resultado.geometry.y
-                probs = gdf_resultado["probabilidad"]
-                
-                # Crear figura
-                fig, ax = plt.subplots(figsize=(4, 4))
-                
-                # Crear scatter con colormap segmentado
-                scatter = ax.scatter(
-                    x_coords, y_coords, c=probs,
-                    cmap="viridis", s=3, edgecolor="none",
-                    vmin=0, vmax=1
-                )
-                
-                # Añadir barra de color
-                cbar = plt.colorbar(scatter, ax=ax, shrink=0.75, pad=0.01)
-                cbar.set_label("Probabilidad")
-                
-                # Opcional: agregar cortes visuales por rango
-                bins = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
-                labels = ["0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1"]
-                gdf_resultado["rango"] = pd.cut(probs, bins=bins, labels=labels)
-                
-                ax.set_title(f"Distribución espacial de probabilidad ({nombre_modelo})")
-                ax.axis("off")
-                
-                st.pyplot(fig)
                 
                 ### Descargar archivo con resultados
                 st.markdown("### Descargar archivo con resultados")
