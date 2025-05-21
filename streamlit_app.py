@@ -155,6 +155,14 @@ if uploaded_gpkg is not None:
                 fig.update_layout(xaxis_title="Rango de probabilidad", yaxis_title="Número de puntos")
                 st.plotly_chart(fig, use_container_width=True)
 
+                st.markdown("### Hiperparámetros del modelo")
+                
+                # Obtener y mostrar los hiperparámetros
+                modelo_crudo = ctrl.obtener_modelo(nombre_modelo)  # ← función que tú defines
+                parametros = modelo_crudo.named_steps["modelo"].get_params()
+                st.json(parametros)
+
+                
                 st.markdown("### Estadísticas adicionales:")
                 st.markdown(f"- Número total de puntos: **{len(gdf_resultado)}**")
                 st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
