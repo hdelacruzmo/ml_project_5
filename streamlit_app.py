@@ -160,7 +160,32 @@ if uploaded_gpkg is not None:
                 st.markdown(f"- Probabilidad promedio: **{gdf_resultado['probabilidad'].mean():.3f}**")
                 st.markdown(f"- Máxima: **{gdf_resultado['probabilidad'].max():.3f}** | Mínima: **{gdf_resultado['probabilidad'].min():.3f}**")
                 st.markdown(f"- Puntos con probabilidad ≥ 0.8: **{(gdf_resultado['probabilidad'] >= 0.8).sum()}**")
-                              
+
+
+                st.markdown("### Exploración interactiva por variable")
+
+                # Variables predictoras (excepto probabilidad y tipo_punto)
+                variables_numericas = [
+                    col for col in tabla_mostrar.columns
+                    if col not in ["probabilidad", "tipo_punto"] and pd.api.types.is_numeric_dtype(tabla_mostrar[col])
+                ]
+                
+                var_x = st.selectbox("Selecciona una variable para el eje X", variables_numericas, key=f"x_{nombre_modelo}")
+                
+                fig = px.scatter(
+                    tabla_mostrar,
+                    x=var_x,
+                    y="probabilidad",
+                    color="probabilidad",
+                    color_continuous_scale="Viridis",
+                    title=f"Probabilidad vs {var_x}",
+                    hover_data=tabla_mostrar.columns
+                )
+                
+                fig.update_layout(height=400)
+                st.plotly_chart(fig, use_container_width=True)
+
+                
                 st.markdown("### Descargar archivo con resultados")
                 output_path = f"/tmp/resultados_{nombre_modelo.lower().replace(' ', '_')}.gpkg"
                 gdf_resultado.to_file(output_path, driver="GPKG")
